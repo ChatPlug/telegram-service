@@ -1,0 +1,8 @@
+{
+    "name": "telegram",
+    "displayName": "Telegram service",
+    "description": "A telegram service",
+    "entrypoint": "telegram.py",
+    "type": "python3",
+    "version": "0.0.0"
+}

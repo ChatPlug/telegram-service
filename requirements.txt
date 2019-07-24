@@ -1,0 +1,4 @@
+asyncio
+aiogram
+websockets
+aiohttp
