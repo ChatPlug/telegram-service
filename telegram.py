@@ -36,7 +36,7 @@ class TelegramService(ChatPlugService):
         self.bot = Bot(token=config["botToken"])
         self.dp = Dispatcher(self.bot)
         self.dp.register_message_handler(self.handleTelegramMessage, content_types=[
-                                         types.ContentType.PHOTO, types.ContentType.TEXT, types.ContentType.STICKER])
+                                         types.ContentType.PHOTO, types.ContentType.TEXT, types.ContentType.STICKER, types.ContentType.VIDEO])
         await self.dp.start_polling()
 
     async def handleTelegramMessage(self, message):
@@ -67,6 +67,16 @@ class TelegramService(ChatPlugService):
                 "type": "IMAGE",
                 "originId": message["sticker"]["file_id"], 
             }]
+
+        # Handle videos
+        if "video" in message: # message["video"] != null 
+            file = await self.bot.get_file(message["video"]["file_id"])
+            file_path = self.bot.get_file_url(file["file_path"])
+            attachments = [{
+                "sourceUrl": file_path,
+                "type": "VIDEO",
+                "originId": message["video"]["file_id"], 
+            }]        
 
         await self.send_message(
             message["text"] or "",  # body
