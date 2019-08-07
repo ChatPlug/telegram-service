@@ -19,12 +19,12 @@ class TelegramService(ChatPlugService):
             await self.bot.send_photo(int(target_id), attachment["sourceUrl"])
 
     async def on_configuration_received(self, conf):
-        with open('config.' + self.instance_id + '.json', 'w') as outfile:
+        with open('config.' + self.access_token + '.json', 'w') as outfile:
             json.dump({'botToken': conf['fieldValues'][0]}, outfile)
         await self.init_bot()
 
     async def on_connected(self):
-        if not os.path.exists('config.' + self.instance_id + '.json'):
+        if not os.path.exists('config.' + self.access_token + '.json'):
             await self.subscribe_configuration(conf_fields)
         else:
             await self.init_bot()
@@ -40,6 +40,7 @@ class TelegramService(ChatPlugService):
         await self.dp.start_polling()
 
     async def handleTelegramMessage(self, message):
+        print(message)
         # Cache user profile images
         if not str(message["from"]["id"]) in self.user_photos:
             pics = await self.bot.get_user_profile_photos(message["from"]["id"])
@@ -79,13 +80,13 @@ class TelegramService(ChatPlugService):
         )
 
     def get_config(self):
-        with open('config.' + self.instance_id + '.json') as json_file:
+        with open('config.' + self.access_token + '.json') as json_file:
             data = json.load(json_file)
             return data
 
 
 cp = TelegramService(
-    os.environ["INSTANCE_ID"], os.environ["WS_ENDPOINT"], os.environ["HTTP_ENDPOINT"])
+    os.environ["ACCESS_TOKEN"], os.environ["WS_ENDPOINT"], os.environ["HTTP_ENDPOINT"])
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(cp.connect())
